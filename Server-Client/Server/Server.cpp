@@ -5,8 +5,14 @@
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <WinSock2.h>
 #include <iostream>
+#include "stdlib.h"
 #pragma comment(lib,"ws2_32.lib")
+#include <array>
+#include <string>
+#include "helper.h"
 
+
+using namespace std;
 
 int main()
 {
