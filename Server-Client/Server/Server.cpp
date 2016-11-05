@@ -51,6 +51,48 @@ int main()
 	else
 	{
 		cout << "Client Connected" << endl;
+		send(conn, buffer, sizeof(buffer), NULL); //Send Connection Success Message
+
+		char request[4096];
+		recv(conn, request, sizeof(request), NULL); //Receive text request from Client
+		cout << request << endl;
+
+		clientParams = parseRequest(request);
+		string requestCommand;
+		string filename;
+		string hostname;
+
+
+		clientParams = parseRequest(request); //Parse request incoming from client [0]GET/POST
+		requestCommand = clientParams[0];
+		filename = clientParams[1];
+		hostname = clientParams[2];
+
+		int exists;
+		if (requestCommand == "GET")
+		{
+			//VALIDATE IF FILE EXISTS
+			exists = readFile(filename, buffer);
+			if (!exists)
+			{
+				char buffer[] = "file doesn't exist";
+				cout << "file doesn't exist";
+				//return 0;
+			}
+			else
+			{
+				//READ FILE FROM DISK
+				send(conn, buffer, sizeof(buffer), NULL); //Send Connection Success Message
+				cout << "File sent succesfully" << endl;
+				//CLOSE CONNECTION
+			}
+		}
+		else if (requestCommand == "POST")
+		{
+			recv(conn, request, sizeof(request), NULL);
+			//SAVE FILE INTO DISK
+			cout << "File has been uploaded to server.";
+		}
 
 	}
 }
