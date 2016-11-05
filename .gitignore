@@ -280,3 +280,4 @@ paket-files/
 *.exe
 *.out
 *.app
+*.cbp
