@@ -28,3 +28,22 @@ array<string, 3> parseRequest(string request)
 	return requestParams;
 }
 
+int readFile(string filename, char* buffer)
+{
+	string file_content;
+	string str;
+	ifstream file;
+
+	file.open("magdy.txt");
+
+	if (!file.good())
+		return 0;
+
+	while (getline(file, str))
+	{
+		file_content += str;
+		file_content.push_back('\n');
+	}
+	strcpy_s(buffer, sizeof(buffer), file_content.c_str());
+	return 1;
+}
