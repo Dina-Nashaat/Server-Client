@@ -27,7 +27,7 @@ int main()
 	
 	/*Setup the Address clients will connect to*/
 	SOCKADDR_IN address; //Initialize instance of address
-	address.sin_addr.s_addr = inet_addr("192.168.1.65"); //specify the address clients connect to
+	address.sin_addr.s_addr = inet_addr("127.0.0.1"); //specify the address clients connect to
 	address.sin_family = AF_INET; //address follows ipv4 
 	address.sin_port = htons(1111); //convert port number to network byte order (htons)
 	int addressLength = sizeof(address); //used later bind() and accept() system calls
@@ -101,22 +101,22 @@ int main()
 				}
 				else
 				{
+					//SEND CONFIRMATION MSG
 					char msg[]= "HTTP/1.0 200 OK\r\n";
 					cout << msg << endl;
+					send(conn, msg, sizeof(msg), NULL);
 					
 					//READ FILE FROM DISK
-					send(conn, msg, sizeof(msg), NULL);
 					readFile(filename, buffer2, &length);
+					
+					//GET FILE LENGTH
 					string strLength = to_string(length);
 					char buffer3[1024];
 					strcpy_s(buffer3, sizeof(buffer), strLength.c_str());
-					
-					char buffertoSend[1024] ;
-					strcpy_s(buffertoSend, sizeof(buffertoSend), buffer2);
-					
 					send(conn, buffer3, sizeof(buffer3), NULL);
-					
-					send(conn, buffertoSend, sizeof(buffertoSend), NULL); //Send Connection Success Message
+
+					//SEND FILE TO CLIENT
+					send(conn, buffer2, length, NULL); 
 					
 					cout << buffer2; //Print {data data data .... }
 					cout << "File sent succesfully" << endl;

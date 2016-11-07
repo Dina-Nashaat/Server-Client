@@ -10,7 +10,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "helper.h"
 #include "RequestsProvider.h"
-#define IPAddress "192.168.1.69"
+#define IPAddress "127.0.0.1"
 
 int main()
 {
