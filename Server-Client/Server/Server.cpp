@@ -89,9 +89,8 @@ int main()
 
 			if (requestCommand == "GET")
 			{
-				
 				//VALIDATE IF FILE EXISTS
-				exists = readFile(filename, buffer2,&length); //read file returns 1 if file found and inserts into buffer the data of the file. 
+				exists = readFile(filename, buffer2, &length); //read file returns 1 if file found and inserts into buffer the data of the file. 
 				if (!exists)
 				{
 					char msg[] = "HTTP/1.0 404 Not Found\r\n";
@@ -126,14 +125,22 @@ int main()
 			}
 			else if (requestCommand == "POST")
 			{
-				msg = "HTTP 1.0 200 OK\r\n";
+				char msg[] = "HTTP/1.0 200 OK\r\n";
 				send(conn, msg, sizeof(msg), NULL);
-				recv(conn, buffer, sizeof (buffer), NULL);
-				//SAVE FILE INTO DISK
-				writeFile(filename, buffer2, length);
+
+				//Receives length of file to be read
+				char buffer[1024];
+				recv(conn, buffer, sizeof(buffer), NULL);
+				cout << "Content-Length: " << buffer << endl;
+				int contentLength = atoi(buffer);
+
+				//Recevies the file requested
+				char *bufferRecevier = new (nothrow) char[contentLength];
+				recv(conn, bufferRecevier, contentLength, NULL);
+
+				//Save the file into disk
+				writeFile(filename, bufferRecevier, contentLength);
 				cout << "File has been uploaded to server.";
-				msg = "File has been uploaded successfully.";
-				send(conn, msg, sizeof(msg), NULL);
 			}
 		}
 

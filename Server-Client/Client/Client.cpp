@@ -65,12 +65,13 @@ int main()
 		//Send the Request
 		send(Connection, request, sizeof(request), NULL);
 
-		if (requestCommand == "GET") {
-			//Receives response from the server (in case of GET)
-			recv(Connection, request, sizeof(request), NULL);
-			serverParams = parseRequest(request);
-			std::cout << "Receiving Response: " << request;
+		//Receives response from the server (in case of GET)
+		recv(Connection, request, sizeof(request), NULL);
+		std::cout << "Receiving Response: " << request;
 
+		if (requestCommand == "GET") {
+			//Check if 200 response or 404 response
+			serverParams = parseRequest(request);
 			if (!strcmp(serverParams[1].c_str(), "200")) {
 				//Receives length of file to be read
 				char buffer[1024];
@@ -84,12 +85,24 @@ int main()
 
 				//Write the file to the disk
 				writeFile(filename, bufferRecevier, contentLength);
-				cout << "File has been received successfully." << endl;
+				cout << "File has been downloaded successfully." << endl;
 			}
 
 		}
 		else if (requestCommand == "POST") {
+			//Read the file from the disk
+			char *bufferSender;
+			int length;
+			readFile(filename, bufferSender, &length);
 
+			//Get & Send the file length
+			string strLength = to_string(length);
+			char bufferLength[1024];
+			strcpy_s(bufferLength, sizeof(bufferLength), strLength.c_str());
+			send(Connection, bufferLength, sizeof(bufferLength), NULL);
+
+			//Send the file
+			send(Connection, bufferSender, length, NULL);
 		}
 
 	}

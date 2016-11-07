@@ -8,7 +8,7 @@ using namespace std;
 vector<string> getRequests() {
 	vector<string> requests;
 
-	requests.push_back("GET test.gif hostname");
+	requests.push_back("POST magdy.png hostname");
 
 	return requests;
 }
