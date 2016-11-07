@@ -27,6 +27,12 @@ int main()
 	addr.sin_family = AF_INET; //IPv4 Socket
 
 	SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL); //Set Connection socket
+	char permission[256];
+	//char request[4096];
+	array<string, 3> clientParams;
+	string requestCommand; //GET or POST
+	string filename;
+	string hostname; //Server Name
 
 	while (true) {
 		if (connect(Connection, (SOCKADDR*)&addr, sizeofaddr) != 0) //If we are unable to connect...
@@ -36,14 +42,26 @@ int main()
 		}
 		std::cout << "Magdy Connected!" << std::endl;
 
-		char permission[256];
 		recv(Connection, permission, sizeof(permission), NULL); //Receive Permission Message from the server
 		std::cout << "Permission Response: " << permission << std::endl;
 
-		char MOTD2[] = "GET oop.txt hostname"; //Current Request to send to the server
-		send(Connection, MOTD2, sizeof(MOTD2), NULL); //Send the Request
-		recv(Connection, MOTD2, sizeof(MOTD2), NULL); //Receives data from the server (in case of GET)
-		std::cout << MOTD2;
+		char request[] = "GET oop.txt hostname"; //Current Request to be sent to the server
+
+		clientParams = parseRequest(request); //Parse the request to be sent
+		requestCommand = clientParams[0];
+		filename = clientParams[1];
+		hostname = clientParams[2];
+
+		send(Connection, request, sizeof(request), NULL); //Send the Request
+
+		if (requestCommand == "GET") {
+			recv(Connection, request, sizeof(request), NULL); //Receives data from the server (in case of GET)
+			std::cout << request << std::endl;
+		}
+		else if (requestCommand == "POST") {
+
+		}
+
 	}
 
 }	
