@@ -3,11 +3,14 @@
 
 #include "stdafx.h"
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <WinSock2.h>
 #include <iostream>
+#include <vector>
 #pragma comment(lib,"ws2_32.lib")
 #include "helper.h"
-#define IPAddress "192.168.1.100"
+#include "RequestsProvider.h"
+#define IPAddress "192.168.1.65"
 
 int main()
 {
@@ -28,13 +31,13 @@ int main()
 
 	SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL); //Set Connection socket
 	char permission[256];
-	//char request[4096];
+	vector<string> requests = getRequests();
 	array<string, 3> clientParams;
 	string requestCommand; //GET or POST
 	string filename;
 	string hostname; //Server Name
 
-	while (true) {
+	for (int currentRequest = 0; currentRequest < requests.size(); currentRequest++) {
 		if (connect(Connection, (SOCKADDR*)&addr, sizeofaddr) != 0) //If we are unable to connect...
 		{
 			MessageBoxA(NULL, "Failed to Connect", "Error", MB_OK | MB_ICONERROR);
@@ -45,7 +48,10 @@ int main()
 		recv(Connection, permission, sizeof(permission), NULL); //Receive Permission Message from the server
 		std::cout << "Permission Response: " << permission << std::endl;
 
-		char request[] = "GET oop.txt hostname"; //Current Request to be sent to the server
+		char request[1024]; //Current Request to be sent to the server
+		strncpy_s(request, requests[currentRequest].c_str(), sizeof(request));
+		request[sizeof(request) - 1] = 0;
+		std::cout << "Sending the Request: " << request << std::endl;
 
 		clientParams = parseRequest(request); //Parse the request to be sent
 		requestCommand = clientParams[0];
@@ -56,12 +62,14 @@ int main()
 
 		if (requestCommand == "GET") {
 			recv(Connection, request, sizeof(request), NULL); //Receives data from the server (in case of GET)
-			std::cout << request << std::endl;
+			std::cout << "Receiving Response: " << request << std::endl;
 		}
 		else if (requestCommand == "POST") {
 
 		}
 
 	}
+
+	system("pause");
 
 }	
