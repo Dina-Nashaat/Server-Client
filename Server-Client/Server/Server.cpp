@@ -27,7 +27,7 @@ int main()
 	
 	/*Setup the Address clients will connect to*/
 	SOCKADDR_IN address; //Initialize instance of address
-	address.sin_addr.s_addr = inet_addr("192.168.1.100"); //specify the address clients connect to
+	address.sin_addr.s_addr = inet_addr("192.168.1.65"); //specify the address clients connect to
 	address.sin_family = AF_INET; //address follows ipv4 
 	address.sin_port = htons(1111); //convert port number to network byte order (htons)
 	int addressLength = sizeof(address); //used later bind() and accept() system calls
@@ -40,7 +40,9 @@ int main()
 
 	/*Message Instances*/
 	array<string, 3> clientParams;
-	char *buffer = "You are now connected to Dina's Server"; //Message from server to client.
+	char buffer[] = "You are now connected to Dina's Server"; //Message from server to client.
+	char *msg = "";
+	char *buffer2;
 	char request[4096]; //Receive request messages from client to server
 	string requestCommand; //GET or POST
 	string filename;
@@ -53,6 +55,7 @@ int main()
 	while (1)
 	{
 		conn = accept(sListen, (SOCKADDR*)&address, &addressLength); //Wait for incoming connection from clients
+		select();
 		if (conn == 0)
 		{
 			cout << "Connection Failed" << endl;
@@ -74,27 +77,39 @@ int main()
 
 			if (requestCommand == "GET")
 			{
+				
 				//VALIDATE IF FILE EXISTS
-				exists = readFile(filename, buffer,&length); //read file returns 1 if file found and inserts into buffer the data of the file. 
+				exists = readFile(filename, buffer2,&length); //read file returns 1 if file found and inserts into buffer the data of the file. 
 				if (!exists)
 				{
-					char buffer[] = "HTTP/1.0 404 Not Found \r\n";
+					char msg[] = "HTTP/1.0 404 Not Found";
 					cout << "File requested by client does not exist";
-					send(conn, buffer, sizeof(buffer), NULL);
+					send(conn, msg, sizeof(buffer), NULL);
+					closesocket(conn);
 				}
 				else
 				{
+					char msg[]= "HTTP/1.0 200 OK\r\n";
 					//READ FILE FROM DISK
+					send(conn, msg, sizeof(msg), NULL);
+					readFile(filename, buffer2, &length);
 					send(conn, buffer, sizeof(buffer), NULL); //Send Connection Success Message
+					cout << buffer; //Print {data data data .... }
 					cout << "File sent succesfully" << endl;
+
 					closesocket(conn);
 				}
 			}
 			else if (requestCommand == "POST")
 			{
-				recv(conn, request, sizeof(request), NULL);
+				msg = "HTTP 1.0 200 OK\r\n";
+				send(conn, msg, sizeof(msg), NULL);
+				recv(conn, buffer, sizeof (buffer), NULL);
 				//SAVE FILE INTO DISK
+				writeFile(filename, buffer2, length);
 				cout << "File has been uploaded to server.";
+				msg = "File has been uploaded successfully.";
+				send(conn, msg, sizeof(msg), NULL);
 			}
 		}
 
