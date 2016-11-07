@@ -80,8 +80,7 @@ int main()
 			recv(Connection, bufferRecevier, contentLength, NULL);
 
 			//Write the file to the disk
-			char *bufferPointer = bufferRecevier;
-			writeFile(filename, bufferPointer, contentLength);
+			writeFile(filename, bufferRecevier, contentLength);
 			cout << "File has been received successfully." << endl;
 		}
 		else if (requestCommand == "POST") {
