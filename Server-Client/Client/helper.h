@@ -7,6 +7,7 @@
 #include <array>
 #include <fstream>
 #define _CRT_SECURE_NO_WARNINGS
+
 using namespace std;
 
 array<string, 3> parseRequest(string request)

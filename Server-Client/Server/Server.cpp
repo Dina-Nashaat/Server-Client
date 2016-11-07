@@ -27,7 +27,7 @@ int main()
 	
 	/*Setup the Address clients will connect to*/
 	SOCKADDR_IN address; //Initialize instance of address
-	address.sin_addr.s_addr = inet_addr("192.168.1.100"); //specify the address clients connect to
+	address.sin_addr.s_addr = inet_addr("127.0.0.1"); //specify the address clients connect to
 	address.sin_family = AF_INET; //address follows ipv4 
 	address.sin_port = htons(1111); //convert port number to network byte order (htons)
 	int addressLength = sizeof(address); //used later bind() and accept() system calls
