@@ -40,12 +40,13 @@ int main()
 
 	/*Message Instances*/
 	array<string, 3> clientParams;
-	char buffer[] = "You are now connected to Dina's Server"; //Message from server to client.
+	char *buffer = "You are now connected to Dina's Server"; //Message from server to client.
 	char request[4096]; //Receive request messages from client to server
 	string requestCommand; //GET or POST
 	string filename;
 	string hostname; //Server Name
 	int exists;
+	int length; //get length of file being read.
 
 	//Hold Client Connection	
 	SOCKET conn;
@@ -74,7 +75,7 @@ int main()
 			if (requestCommand == "GET")
 			{
 				//VALIDATE IF FILE EXISTS
-				exists = readFile(filename, buffer); //read file returns 1 if file found and inserts into buffer the data of the file. 
+				exists = readFile(filename, buffer,&length); //read file returns 1 if file found and inserts into buffer the data of the file. 
 				if (!exists)
 				{
 					char buffer[] = "HTTP/1.0 404 Not Found \r\n";
