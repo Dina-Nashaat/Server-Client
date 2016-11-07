@@ -10,7 +10,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "helper.h"
 #include "RequestsProvider.h"
-#define IPAddress "192.168.1.65"
+#define IPAddress "192.168.1.69"
 
 int main()
 {
@@ -73,16 +73,20 @@ int main()
 			char buffer[1024];
 			recv(Connection, buffer, sizeof(buffer), NULL);
 			cout << "Content-Length: " << buffer << endl;
-			int fileLength;
+			int contentLength = atoi(buffer);
 
 			//Recevies the file requested
 			char bufferRecevier[11164];
-			recv(Connection, bufferRecevier, sizeof(bufferRecevier), NULL);
-			cout << bufferRecevier << endl;
+			char test[1024];
+			string result = "";
+			int recevied = 0;
+				recevied += recv(Connection, bufferRecevier, sizeof(bufferRecevier), NULL);
+				result += test;
+			cout << recevied << endl;
 
 			//Write the file to the disk
 			char *bufferPointer = bufferRecevier;
-			writeFile(filename, bufferPointer, 11164);
+			writeFile(filename, bufferPointer, contentLength);
 			cout << "File has been received successfully." << endl;
 		}
 		else if (requestCommand == "POST") {
