@@ -37,22 +37,53 @@ int getExtension(string filename)
 		return 0;
 }
 
-int readFile(string filename, char* buffer)
+int readFile(string filename, char*&buffer, int*length)
 {
+	char *readBuffer = "";
+
 	string file_content;
 	string str;
-	ifstream file;
-
-	file.open("magdy.txt");
+	ifstream file(filename);
+	int flag = getExtension(filename);
 
 	if (!file.good())
 		return 0;
-
-	while (getline(file, str))
+	if (file)
 	{
-		file_content += str;
-		file_content.push_back('\n');
+		file.seekg(0, file.end);
+		*length = file.tellg();
+		file.seekg(0, file.beg);
 	}
-	strcpy_s(buffer, sizeof(buffer), file_content.c_str());
+	file.close();
+	if (!flag)
+	{
+		file.open(filename, fstream::binary);
+		cout << "reading in binary" << endl;
+
+		if (file)
+		{
+			char *readBuffer = new char[*length];
+			file.read(readBuffer, *length);
+			buffer = readBuffer;
+			if (file)
+				cout << "Succesfully read" << endl;
+			else
+				cout << "error: only " << file.gcount() << " could be read" << endl;
+			file.close();
+		}
+	}
+	else
+	{
+		file.open(filename);
+		cout << "reading in text mode" << endl;
+		while (getline(file, str))
+		{
+			file_content += str;
+			file_content.push_back('\n');
+		}
+		char *readBuffer2 = new char[file_content.length() + 1];
+		strcpy_s(readBuffer2, sizeof(file_content), file_content.c_str());
+		buffer = readBuffer2;
+	}
 	return 1;
 }
