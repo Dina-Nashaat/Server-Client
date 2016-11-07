@@ -30,7 +30,6 @@ int main()
 	addr.sin_family = AF_INET; //IPv4 Socket
 
 	SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL); //Set Connection socket
-	char permission[256];
 	vector<string> requests = getRequests();
 	array<string, 3> clientParams;
 	string requestCommand; //GET or POST
@@ -45,24 +44,46 @@ int main()
 		}
 		std::cout << "Magdy Connected!" << std::endl;
 
-		recv(Connection, permission, sizeof(permission), NULL); //Receive Permission Message from the server
+		//Receive Permission Message from the server
+		char permission[256];
+		recv(Connection, permission, sizeof(permission), NULL);
 		std::cout << "Permission Response: " << permission << std::endl;
 
-		char request[1024]; //Current Request to be sent to the server
+		//Current Request to be sent to the server
+		char request[1024];
 		strncpy_s(request, requests[currentRequest].c_str(), sizeof(request));
 		request[sizeof(request) - 1] = 0;
 		std::cout << "Sending the Request: " << request << std::endl;
 
-		clientParams = parseRequest(request); //Parse the request to be sent
+		//Parse the request to be sent
+		clientParams = parseRequest(request);
 		requestCommand = clientParams[0];
 		filename = clientParams[1];
 		hostname = clientParams[2];
 
-		send(Connection, request, sizeof(request), NULL); //Send the Request
+		//Send the Request
+		send(Connection, request, sizeof(request), NULL);
 
 		if (requestCommand == "GET") {
-			recv(Connection, request, sizeof(request), NULL); //Receives data from the server (in case of GET)
+			//Receives response from the server (in case of GET)
+			recv(Connection, request, sizeof(request), NULL); 
 			std::cout << "Receiving Response: " << request << std::endl;
+
+			//Receives length of file to be read
+			char buffer[1024];
+			recv(Connection, buffer, sizeof(buffer), NULL);
+			cout << "Content-Length: " << buffer << endl;
+			int fileLength;
+
+			//Recevies the file requested
+			char bufferRecevier[11164];
+			recv(Connection, bufferRecevier, sizeof(bufferRecevier), NULL);
+			cout << bufferRecevier << endl;
+
+			//Write the file to the disk
+			char *bufferPointer = bufferRecevier;
+			writeFile(filename, bufferPointer, 11164);
+			cout << "File has been received successfully." << endl;
 		}
 		else if (requestCommand == "POST") {
 
