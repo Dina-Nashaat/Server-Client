@@ -33,12 +33,7 @@ int main()
 	int addressLength = sizeof(address); //used later bind() and accept() system calls
 
 
-	/*Listen for incoming Connections*/
-	SOCKET sListen = socket(AF_INET, SOCK_STREAM, NULL); //Specify socket to listen at
-	bind(sListen, (SOCKADDR*)&address, addressLength); 
-	listen(sListen, SOMAXCONN);
-
-	/*Message Instances*/
+	 /*Message Instances*/
 	array<string, 3> clientParams;
 	char buffer[] = "You are now connected to Dina's Server"; //Message from server to client.
 	char *msg = "";
@@ -50,12 +45,29 @@ int main()
 	int exists;
 	int length; //get length of file being read.
 
+	 /*Listen for incoming Connections*/
+	SOCKET sListen = socket(AF_INET, SOCK_STREAM, NULL); //Specify socket to listen at
+	bind(sListen, (SOCKADDR*)&address, addressLength); 
+	listen(sListen, SOMAXCONN);
+
+
 	//Hold Client Connection	
 	SOCKET conn;
+	fd_set readfds;
+	int client_socket[30];
+	int max_clients = 30;
+	int sd, max_sd;
+	for (int i = 0; i < max_clients;i++)
+	{
+		client_socket[i] = 0;
+	}
 	while (1)
 	{
+		FD_ZERO(&readfds);
+		FD_SET(sListen,&readfds);
+		//max_sd
 		conn = accept(sListen, (SOCKADDR*)&address, &addressLength); //Wait for incoming connection from clients
-		select();
+		//select();
 		if (conn == 0)
 		{
 			cout << "Connection Failed" << endl;
@@ -90,11 +102,23 @@ int main()
 				else
 				{
 					char msg[]= "HTTP/1.0 200 OK\r\n";
+					cout << msg << endl;
+					
 					//READ FILE FROM DISK
 					send(conn, msg, sizeof(msg), NULL);
 					readFile(filename, buffer2, &length);
-					send(conn, buffer, sizeof(buffer), NULL); //Send Connection Success Message
-					cout << buffer; //Print {data data data .... }
+					string strLength = to_string(length);
+					char buffer3[1024];
+					strcpy_s(buffer3, sizeof(buffer), strLength.c_str());
+					
+					char buffertoSend[1024] ;
+					strcpy_s(buffertoSend, sizeof(buffertoSend), buffer2);
+					
+					send(conn, buffer3, sizeof(buffer3), NULL);
+					
+					send(conn, buffertoSend, sizeof(buffertoSend), NULL); //Send Connection Success Message
+					
+					cout << buffer2; //Print {data data data .... }
 					cout << "File sent succesfully" << endl;
 
 					closesocket(conn);
