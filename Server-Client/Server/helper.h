@@ -28,6 +28,15 @@ array<string, 3> parseRequest(string request)
 	return requestParams;
 }
 
+int getExtension(string filename)
+{
+	if (filename.substr(filename.find_last_of(".") + 1) == "txt" ||
+		filename.substr(filename.find_last_of(".") + 1) == "html")
+		return 1;
+	else
+		return 0;
+}
+
 int readFile(string filename, char* buffer)
 {
 	string file_content;
