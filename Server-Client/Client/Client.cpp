@@ -31,6 +31,7 @@ int main()
 
 	SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL); //Set Connection socket
 	vector<string> requests = getRequests();
+	array<string, 3> serverParams;
 	array<string, 3> clientParams;
 	string requestCommand; //GET or POST
 	string filename;
@@ -66,22 +67,26 @@ int main()
 
 		if (requestCommand == "GET") {
 			//Receives response from the server (in case of GET)
-			recv(Connection, request, sizeof(request), NULL); 
-			std::cout << "Receiving Response: " << request << std::endl;
+			recv(Connection, request, sizeof(request), NULL);
+			serverParams = parseRequest(request);
+			std::cout << "Receiving Response: " << request;
 
-			//Receives length of file to be read
-			char buffer[1024];
-			recv(Connection, buffer, sizeof(buffer), NULL);
-			cout << "Content-Length: " << buffer << endl;
-			int contentLength = atoi(buffer);
+			if (!strcmp(serverParams[1].c_str(), "200")) {
+				//Receives length of file to be read
+				char buffer[1024];
+				recv(Connection, buffer, sizeof(buffer), NULL);
+				cout << "Content-Length: " << buffer << endl;
+				int contentLength = atoi(buffer);
 
-			//Recevies the file requested
-			char *bufferRecevier = new (nothrow) char[contentLength];
-			recv(Connection, bufferRecevier, contentLength, NULL);
+				//Recevies the file requested
+				char *bufferRecevier = new (nothrow) char[contentLength];
+				recv(Connection, bufferRecevier, contentLength, NULL);
 
-			//Write the file to the disk
-			writeFile(filename, bufferRecevier, contentLength);
-			cout << "File has been received successfully." << endl;
+				//Write the file to the disk
+				writeFile(filename, bufferRecevier, contentLength);
+				cout << "File has been received successfully." << endl;
+			}
+
 		}
 		else if (requestCommand == "POST") {
 

@@ -17,7 +17,7 @@ array<string, 3> parseRequest(string request)
 	string token;
 
 	int i = 0;
-	while (getline(ss, token, ' '))
+	while (getline(ss, token, ' ') && i < 2)
 	{
 		requestParams[i] = token;
 		i++;

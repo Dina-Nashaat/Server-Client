@@ -94,7 +94,7 @@ int main()
 				exists = readFile(filename, buffer2,&length); //read file returns 1 if file found and inserts into buffer the data of the file. 
 				if (!exists)
 				{
-					char msg[] = "HTTP/1.0 404 Not Found";
+					char msg[] = "HTTP/1.0 404 Not Found\r\n";
 					cout << "File requested by client does not exist";
 					send(conn, msg, sizeof(buffer), NULL);
 					closesocket(conn);
