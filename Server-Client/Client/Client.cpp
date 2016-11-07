@@ -6,6 +6,7 @@
 #include <WinSock2.h>
 #include <iostream>
 #pragma comment(lib,"ws2_32.lib")
+#define IPAddress "192.168.1.100"
 
 
 int main()
@@ -21,17 +22,22 @@ int main()
 
 	SOCKADDR_IN addr; //Address to be binded to our Connection socket
 	int sizeofaddr = sizeof(addr); //Need sizeofaddr for the connect function
-	addr.sin_addr.s_addr = inet_addr("192.168.1.100"); //Address = localhost (this pc)
+	addr.sin_addr.s_addr = inet_addr(IPAddress); //Address = localhost (this pc)
 	addr.sin_port = htons(1111); //Port = 1111
 	addr.sin_family = AF_INET; //IPv4 Socket
 
 	SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL); //Set Connection socket
-	if (connect(Connection, (SOCKADDR*)&addr, sizeofaddr) != 0) //If we are unable to connect...
-	{
-		MessageBoxA(NULL, "Failed to Connect", "Error", MB_OK | MB_ICONERROR);
-		return 0; //Failed to Connect
+
+	while (true) {
+		if (connect(Connection, (SOCKADDR*)&addr, sizeofaddr) != 0) //If we are unable to connect...
+		{
+			MessageBoxA(NULL, "Failed to Connect", "Error", MB_OK | MB_ICONERROR);
+			continue; //Failed to Connect
+		}
+		std::cout << "Connected!" << std::endl;
+
+
 	}
-	std::cout << "Connected!" << std::endl;
 
 	char MOTD[256];
 	recv(Connection, MOTD, sizeof(MOTD), NULL); //Receive Message of the Day buffer into MOTD array
@@ -41,9 +47,4 @@ int main()
 	send(Connection, MOTD2, sizeof(MOTD2), NULL);
 	recv(Connection, MOTD2, sizeof(MOTD), NULL); //Receive Message of the Day buffer into MOTD array
 	std::cout << MOTD2;
-
-	while (true)
-	{
-		Sleep(10);
-	}
 }	
