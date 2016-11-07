@@ -76,13 +76,8 @@ int main()
 			int contentLength = atoi(buffer);
 
 			//Recevies the file requested
-			char bufferRecevier[11164];
-			char test[1024];
-			string result = "";
-			int recevied = 0;
-				recevied += recv(Connection, bufferRecevier, sizeof(bufferRecevier), NULL);
-				result += test;
-			cout << recevied << endl;
+			char *bufferRecevier = new (nothrow) char[contentLength];
+			recv(Connection, bufferRecevier, contentLength, NULL);
 
 			//Write the file to the disk
 			char *bufferPointer = bufferRecevier;
