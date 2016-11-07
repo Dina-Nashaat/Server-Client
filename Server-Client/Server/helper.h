@@ -87,3 +87,28 @@ int readFile(string filename, char*&buffer, int*length)
 	}
 	return 1;
 }
+
+void writeFile(string filename, char*&buffer, int length)
+{
+	// 0 for binary files
+	// 1 for text/html files
+	int flag = getExtension(filename);
+	ofstream outfile;
+
+	if (!flag)
+	{
+		cout << "writing in binary" << endl;
+		outfile.open(filename, fstream::out | fstream::binary);
+		outfile.write(buffer, length);
+		cout << "File successfully saved." << endl;
+		outfile.close();
+	}
+	else
+	{
+		cout << "writing in text mode" << endl;
+		outfile.open(filename, fstream::out);
+		outfile << buffer;
+		cout << "File successfully saved." << endl;
+		outfile.close();
+	}
+}
