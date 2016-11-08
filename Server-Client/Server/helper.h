@@ -59,7 +59,7 @@ int readFile(string filename, char*&buffer, int*length)
 	if (!flag)
 	{
 		file.open(filename, fstream::binary);
-		cout << "reading in binary" << endl;
+		cout << "Reading in binary" << endl;
 
 		if (file)
 		{
@@ -99,7 +99,7 @@ void writeFile(string filename, char*&buffer, int length)
 
 	if (!flag)
 	{
-		cout << "writing in binary" << endl;
+		cout << "Writing in binary" << endl;
 		outfile.open(filename, fstream::out | fstream::binary);
 		outfile.write(buffer, length);
 		cout << "File successfully saved." << endl;

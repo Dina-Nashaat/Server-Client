@@ -41,6 +41,7 @@ int main()
 		if (connect(Connection, (SOCKADDR*)&addr, sizeofaddr) != 0) //If we are unable to connect...
 		{
 			MessageBoxA(NULL, "Failed to Connect", "Error", MB_OK | MB_ICONERROR);
+			currentRequest--;
 			continue; //Failed to Connect
 		}
 		std::cout << "Magdy Connected!" << std::endl;
