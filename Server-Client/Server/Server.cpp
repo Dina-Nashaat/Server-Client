@@ -33,7 +33,7 @@ int main()
 	
 	/*Setup the Address clients will connect to*/
 	SOCKADDR_IN address; //Initialize instance of address
-	address.sin_addr.s_addr = inet_addr("127.0.0.1"); //specify the address clients connect to
+	address.sin_addr.s_addr = inet_addr("172.16.2.154"); //specify the address clients connect to
 	address.sin_family = AF_INET; //address follows ipv4 
 	address.sin_port = htons(1111); //convert port number to network byte order (htons)
 	int addressLength = sizeof(address); //used later bind() and accept() system calls
@@ -70,6 +70,7 @@ int main()
 	{
 		client_socket[i] = 0;
 	}
+	cout << "Awaiting Connections ... " << endl;
 	while (1)
 	{
 		FD_ZERO(&readfds);
@@ -128,10 +129,13 @@ int main()
 			{
 				recv(client_socket[i], request, sizeof(request), NULL); //Receive text request from Client
 				cout << "Receiving Request: " << request << endl; //Print out recieved command. 
+				conn = client_socket[i];
 				_beginthreadex(0, 0, proceedRequest, NULL, 0, 0);
 				client_socket[i] = 0;
 			}
+			
 		}
+
 	//Hold Client Connection	
 	}
 	
@@ -218,7 +222,6 @@ unsigned int __stdcall proceedRequest(void *data)
 
 		cout << endl;
 		closesocket(conn);
-		//client_socket[i] = 0; //initialize for reuse
 	}
 	return 0;
 }

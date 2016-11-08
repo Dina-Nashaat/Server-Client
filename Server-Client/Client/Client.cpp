@@ -10,7 +10,7 @@
 #pragma comment(lib,"ws2_32.lib")
 #include "helper.h"
 #include "RequestsProvider.h"
-#define IPAddress "127.0.0.1"
+#define IPAddress "172.16.2.154"
 
 int main()
 {
@@ -64,6 +64,8 @@ int main()
 		hostname = clientParams[2];
 
 		//Send the Request
+
+		Sleep(7000);
 		send(Connection, request, sizeof(request), NULL);
 
 		//Receives response from the server (in case of GET)

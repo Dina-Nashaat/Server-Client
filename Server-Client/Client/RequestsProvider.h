@@ -8,8 +8,8 @@ using namespace std;
 vector<string> getRequests() {
 	vector<string> requests;
 
-	requests.push_back("POST magdy.png hostname");
-	requests.push_back("GET brush2.gif hostname");
+	requests.push_back("GET report.pdf hostname");
+	//requests.push_back("GET brush2.gif hostname");
 
 	return requests;
 }
