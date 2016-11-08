@@ -82,6 +82,7 @@ int readFile(string filename, char*&buffer, int*length)
 			file_content += str;
 			file_content.push_back('\n');
 		}
+		file_content.push_back('\0');
 		char *readBuffer2 = new char[file_content.length() + 1];
 		strcpy_s(readBuffer2, sizeof(file_content), file_content.c_str());
 		buffer = readBuffer2;
