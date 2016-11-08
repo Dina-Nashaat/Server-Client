@@ -92,7 +92,7 @@ int main()
 		activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
 		if (activity < 0 && errno!=EINTR)
-			cout<< "Error in select";	
+			cout<< "Error in select" << endl;	
 
 		//If you detect any incoming connections
 		if (FD_ISSET(sListen, &readfds))
@@ -104,9 +104,9 @@ int main()
 			}
 			else
 			{
-				cout << "Client Connected. Socket fd is " << conn << "ip is " << inet_ntoa(address.sin_addr) << endl;
+				cout << "Client Connected with Socket fd is " << conn << " ip is " << inet_ntoa(address.sin_addr) << endl;
 				send(conn, buffer, sizeof(buffer), NULL); //Send Connection Success Message
-				cout << "success message sent to client" << endl;
+				cout << "Permission message sent to the client" << endl;
 			}
 
 			for (int i = 0; i < max_clients; i++)
@@ -114,7 +114,7 @@ int main()
 				if (client_socket[i] == 0)
 				{
 					client_socket[i] = conn;
-					cout << "client "<< i << " has been added to socket array" << endl;
+					cout << "Client "<< i << " has been added to socket array" << endl;
 					break;
 				}
 			}
@@ -127,7 +127,7 @@ int main()
 			if (FD_ISSET(sd, &readfds))
 			{
 				recv(client_socket[i], request, sizeof(request), NULL); //Receive text request from Client
-				cout << request << endl; //Print out recieved command. 
+				cout << "Receiving Request: " << request << endl; //Print out recieved command. 
 				_beginthreadex(0, 0, proceedRequest, NULL, 0, 0);
 			}
 		}
@@ -158,23 +158,24 @@ unsigned int __stdcall proceedRequest(void *data)
 	if (requestCommand == "GET")
 	{
 		//VALIDATE IF FILE EXISTS
-		exists = readFile(filename, buffer2, &length); //read file returns 1 if file found and inserts into buffer the data of the file. 
+		//read file returns 1 if file found and inserts into buffer the data of the file.
+		exists = readFile(filename, buffer2, &length);
 		if (!exists)
 		{
 			char msg[] = "HTTP/1.0 404 Not Found\r\n";
 			cout << "File requested by client does not exist";
+			cout << "Sending Response: " << msg;
 			send(conn, msg, sizeof(buffer), NULL);
+
+			cout << endl;
 			closesocket(conn);
 		}
 		else
 		{
 			//SEND CONFIRMATION MSG
 			char msg[] = "HTTP/1.0 200 OK\r\n";
-			cout << msg << endl;
+			cout << "Sending Response: " << msg;
 			send(conn, msg, sizeof(msg), NULL);
-
-			//READ FILE FROM DISK
-			readFile(filename, buffer2, &length);
 
 			//GET FILE LENGTH
 			string strLength = to_string(length);
@@ -185,9 +186,11 @@ unsigned int __stdcall proceedRequest(void *data)
 			//SEND FILE TO CLIENT
 			send(conn, buffer2, length, NULL);
 
-			cout << buffer2; //Print {data data data .... }
+			//Print {data data data .... }
+			//cout << buffer2 << endl;
 			cout << "File sent succesfully" << endl;
-
+			
+			cout << endl;
 			closesocket(conn);
 			//client_socket[i] = 0; //initialize for reuse
 		}
@@ -196,6 +199,7 @@ unsigned int __stdcall proceedRequest(void *data)
 	{
 		char msg[] = "HTTP/1.0 200 OK\r\n";
 		send(conn, msg, sizeof(msg), NULL);
+		cout << "Sending Response: " << msg;
 
 		//Receives length of file to be read
 		char buffer[1024];
@@ -209,7 +213,9 @@ unsigned int __stdcall proceedRequest(void *data)
 
 		//Save the file into disk
 		writeFile(filename, bufferRecevier, contentLength);
-		cout << "File has been uploaded to server.";
+		cout << "File has been uploaded to server." << endl;
+
+		cout << endl;
 		closesocket(conn);
 		//client_socket[i] = 0; //initialize for reuse
 	}

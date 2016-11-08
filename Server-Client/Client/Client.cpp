@@ -105,6 +105,7 @@ int main()
 			send(Connection, bufferSender, length, NULL);
 		}
 
+		cout << endl;
 		closesocket(Connection);
 
 	}
