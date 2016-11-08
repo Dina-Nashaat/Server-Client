@@ -31,8 +31,8 @@ array<string, 3> parseRequest(string request)
 
 int getExtension(string filename)
 {
-	if (filename.substr(filename.find_last_of(".") + 1) == "txt" ||
-		filename.substr(filename.find_last_of(".") + 1) == "html")
+	if (filename.substr(filename.find_last_of(".") + 1) == "tt" ||
+		filename.substr(filename.find_last_of(".") + 1) == "tt")
 		return 1;
 	else
 		return 0;
