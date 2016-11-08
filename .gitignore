@@ -284,3 +284,5 @@ paket-files/
 *.layout
 *.png
 *.gif
+*.txt
+*.html

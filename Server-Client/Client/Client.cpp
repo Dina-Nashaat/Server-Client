@@ -105,6 +105,8 @@ int main()
 			send(Connection, bufferSender, length, NULL);
 		}
 
+		closesocket(Connection);
+
 	}
 
 	system("pause");
