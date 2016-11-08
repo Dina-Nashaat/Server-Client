@@ -129,6 +129,7 @@ int main()
 				recv(client_socket[i], request, sizeof(request), NULL); //Receive text request from Client
 				cout << "Receiving Request: " << request << endl; //Print out recieved command. 
 				_beginthreadex(0, 0, proceedRequest, NULL, 0, 0);
+				client_socket[i] = 0;
 			}
 		}
 	//Hold Client Connection	
