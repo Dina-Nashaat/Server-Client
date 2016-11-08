@@ -27,8 +27,8 @@ array<string, 3> parseRequest(string request)
 
 int getExtension(string filename)
 {
-	if (filename.substr(filename.find_last_of(".") + 1) == "txt" ||
-		filename.substr(filename.find_last_of(".") + 1) == "html")
+	if (filename.substr(filename.find_last_of(".") + 1) == "tt" ||
+		filename.substr(filename.find_last_of(".") + 1) == "ttt")
 		return 1;
 	else
 		return 0;
@@ -78,6 +78,7 @@ int readFile(string filename, char*&buffer, int*length)
 			file_content += str;
 			file_content.push_back('\n');
 		}
+		file_content.push_back('\0');
 		char *readBuffer2 = new char[file_content.length() + 1];
 		strcpy_s(readBuffer2, sizeof(file_content), file_content.c_str());
 		buffer = readBuffer2;
@@ -91,7 +92,7 @@ void writeFile(string filename, char*&buffer, int length)
 	// 1 for text/html files
 	int flag = getExtension(filename);
 	ofstream outfile;
-
+	buffer[length + 1] = '\0';
 	if (!flag)
 	{
 		cout << "writing in binary" << endl;
